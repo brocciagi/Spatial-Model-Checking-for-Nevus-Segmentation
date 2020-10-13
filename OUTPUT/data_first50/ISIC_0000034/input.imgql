@@ -1,0 +1,251 @@
+// Specification Nevus Segmentation of Oct 8, 2020 16h53
+//
+// Authors: Giovanna Broccia, Diego Latella, Mieke Massink
+//
+// Dataset: ISIC 2016 Challenge: Part 1 Segmentation
+// Training dataset of 900 images
+//
+// Public set can be downloaded at:
+// https://challenge.isic-archive.com/data
+//
+// Leaderboard:
+// https://challenge.isic-archive.com/leaderboards/2016 
+//
+// Used for results in FASE 2021 paper.
+// 
+// Images 0-10 (with exception of image 4) have been taken as "training" set
+// ISIC 000, 01, 02, 03, 04, 05, 06,07, 08, 09,10,24,31,43,207,443,3005,8403
+// The specification has been also tested on 50 images from ISIC 2016 ???? 
+// (including those
+// used for training and excluding those that do not satisfy the assumptions below)
+// Also the following images (of 900) have been used to develop the specification:
+// ISIC 303, 1191, 1216, 2616, 3308, 4309, 5666, 5787,8294,8347,9944,10491, 11207
+// ISIC 102, 148, 281, 495, 503, 1118, 1292, 1385, 2353, 2976, 3174, 4168, 7788
+
+// Assumptions on the images:
+// 1) Nevus does not overlap with possibly present black border. In other words, the nevus is
+//   surrounded by (fair coloured) skin
+// 2) There is only one nevus in the image (no nevi that are composed of multiple
+//    disconnected parts)
+// The second requirement in some cases is not a problem.
+// 3) Images may have different sizes. Standard size assumed is 1022 x 767 pixels. 
+//    It is assumed that the ratio between height and with of the image is always the
+//    same.
+//    The relative distances are obtained by multiplication with a factor:
+//    (volume(border) ./. refImgPerimeter) where volume(border) is the length of 
+//    the perimeter of the image under study and refImgPerimeter is the perimeter of
+//    the standard image, i.e. 2 * (1022 + 767).
+// 4) All sample images seem to deal only with fair skin colour. The current specification 
+//    is not suitable for different colour skin due to lack of training images for that type.
+//
+// Analyse with VoxLogicA_0.5.99.1-experimental_osx-x64 of 2020/02/19
+//
+// using script: ./run_analysis.sh data nevusSegm.imgql
+//
+
+//===== NOTE: the groundTruth files have different names in different sets
+// Adjust accordingly!
+// get groundtruth file on data_first10
+load groundTruth = "FASE2021_DATASETS/data_first50/ISIC_0000034/ISIC_0000034_seg_RGB.png"
+// On data_test set use:
+//load groundTruth = "FASE2021_DATASETS/data_first50/ISIC_0000034/ISIC_0000034_Segmentation_RGB.png"
+
+// get original image of nevus
+load nevus = "FASE2021_DATASETS/data_first50/ISIC_0000034/ISIC_0000034.png"
+
+// quantitative image of intensity levels of nevus and ground truth
+let nevusImgIntens = intensity(nevus)
+let groundIntens = intensity(groundTruth)
+
+// Define manual segmentation for comparison considering only positive values
+let manualSeg = groundIntens >. 0  
+
+
+//========== begin function definitions ==============
+
+//=== additional comparison of attribute values
+
+let >(x,y) = (x - y) >. 0
+let <(x,y) = (y - x) >. 0 
+
+//=== similarity scores
+ 
+//Function for computing the Dice-Soerensen index
+let dice(x,y) = (2 .*. volume(x & y)) ./. (volume(x) .+. volume(y))
+
+// Function diceM(x) computes the Dice-Soerensen score against the manual segmentation
+let diceM(x) = dice(x,manualSeg)
+
+// Jaccard coefficient in terms of the Dice-Soerensen index
+let jaccard(x,y) = dice(x,y) ./. (2 .-. dice(x,y))
+
+// TDR: trueDetectionRate is defined as (TP/(TP + FN)). This is also called Sensitivity.
+let sensitivity(x,y) = volume(x & y) ./. (volume(x & y) .+. volume((!x) & (y)))
+
+// Specificity is defined as (TN/(TN + FP))
+let specificity(x,y) = volume((!x) & (!y)) ./. (volume((!x) & (!y)) .+. volume((x) & (!y)))
+
+// Accuracy is defined as (TP+TN)/(TP + TN + FP + FN)
+let accuracy(x,y) =  (volume(x & y) .+. volume((!x) & (!y))) ./. (volume(x & y) .+. volume((!x) & (!y)) .+. volume(x & (!y)) .+. volume((!x) & (y)))
+ 
+// FPR: falsePositiveRate is defined as FP/(TN + FP)
+let flsPositiveRate(x,y) =  volume((x) & (!y)) ./. (volume((!x) & (!y)) .+. volume((x) & (!y)))
+ 
+// ER: errorRate is defined as (FP + FN) / (TP + TN + FP + FN)
+let errRate(x,y) = (volume(x & (!y)) .+. volume((!x) & (y))) ./. (volume(x & y) .+. volume((!x) & (!y)) .+. volume((x) & (!y)) .+. volume((!x) & (y)))
+
+//=== end similarity scores
+
+//=== Compactness Measures
+
+// Function ppM(x) computes the Polsby-Popper measure of compactness of a shape
+// Also called: Isoperimetric quotient
+let square(x) = x .*. x
+let iboundary(x) = near(interior(x)) & !(interior(x))
+let ppM(x) = (volume(x) .*. 4 .*. 3.14) ./. (square(volume(iboundary(x))))
+
+//=== End compactness Measures
+
+//=== Texture Analysis operator and parameter values
+
+//Find pixels with neighborhood of radius rad has pattern similar to pixels satisfying property "a". Tried bins 5,10,15,20 but 15 seems optimal.
+
+// NOTE: division by 255 below is only needed for viewing results with mricron viewer.
+let similarTo(a,rad) = 
+crossCorrelation(rad,nevusImgIntens /. 255,nevusImgIntens /.255,a,min(nevusImgIntens /. 255),max(nevusImgIntens /. 255),15) 
+
+//=== End Texture Analysis operator and parameter values
+
+
+//========== end function definitions ==============
+
+
+//--------------NEVUS and BACKGROUND----------------- 
+
+//------ NEVUS Mieke ------
+
+//----- Take care of images of different size ------
+// Rescale factor for distances w.r.t. an image of
+// size 1022 x 767. This is done via the length of the perimeter of the reference image
+// which is 2 .*. (1022 .+. 767). 
+let refImgPerimeter = 2 .*. (1022 .+. 767)
+
+// The perimiter of the image under analysis is defined as the volume of the border points.
+// The resize factor is the ratio between perimeter of image under analysis and the perimeter
+// of the reference image
+let imgSizeFactor = (volume(border) ./. refImgPerimeter)
+
+// Relative distance operator that takes this scaling factor into account
+let relDist(x) = (imgSizeFactor .*. x)
+
+//--- Take care of black corners in the image ------
+let almostBlack = nevusImgIntens <. 40.0 
+let blackBorder = grow(distleq(relDist(5),border), almostBlack)
+
+//----- Dealing with coloured patches ------
+let bNev = blue(nevus)
+let rNev = red(nevus)
+let gNev = green(nevus)
+
+// patchBlue defines pixels in a blue patch (cerotto) and so on
+// The thresholds have been established experimentally based on available images
+// Blue (red, green resp.) patches have highest value of blue (red, green) component in rgb
+// These should also capture most orange and yellow patches
+// No absolute guarantees: would need more standardisation in images
+
+let patchBlue = distleq(relDist(5),(bNev > (rNev +. 30)) & (bNev > (gNev)) & (bNev >. 150)) 
+let patchRed = distleq(relDist(5),(rNev > (bNev +. 100)) & (rNev > (gNev +. 20))) & (rNev >. 130) 
+let patchGreen = distleq(relDist(5),(gNev > (rNev +. 20)) & (gNev > bNev)& (gNev >. 100))
+
+let patchPart(x,y) = ifB(volume(x) .<. (y .*. volume(tt)),x,ff)
+// A patch should not cover more than 40 percent of the image, otherwise could be nevus
+let patchSample = patchPart(patchBlue,0.4) |  patchPart(patchRed,0.4) | patchPart(patchGreen,0.4) 
+
+// Patches are always located at the border of the image so we use this knowledge
+let patchAtBorder = touch(smoothen(patchSample,relDist(10)), distleq(relDist(20),border))
+
+// Check if it is really a patch by checking its compactness (circle-like) via ppM
+let patch = ifB(ppM(patchAtBorder) .>. 0.5, patchAtBorder, ff)
+
+//----- Background/skin colour sample -----
+
+// take the relative border area that is most likely containing skin pixels around nevus
+let bgSampleWidth =  relDist(200)
+
+let bgSample = distleq(bgSampleWidth, blackBorder) & (!blackBorder) & (!patch)
+
+// bgSimScore computes cross-correlation scores for bg in range [-1,+1]
+let bgSimScore = similarTo(bgSample, relDist(5)) 
+let bgSim = (bgSimScore >. 0.05) & (! patch) & (!blackBorder)
+
+//----- First Pre-segmentation of nevus ------
+
+// Find pxs surrounded by pxs with a cc score for thebackground that is close to zero. 
+// These pxs are likely at the border between nevus and background. 
+let preSeg = ((!border) S (bgSimScore <. 0.11)) & (! patch) & (!blackBorder)
+
+// Remove pixels that are too close to border
+// Remove noise (smoothen)
+// Take largest area (maxvol)
+  
+// The idea of using the two segmentations below is that the smoothen with distance 10 is able 
+// to "disconnect" possible thin protrusions (e.g. hairs) that run from the nevus to the border. 
+// There may be problems if the preSeg is composed of many small parts of the nevus. They may
+// get removed accidentally.
+let nevSeg = smoothen(maxvol(preSeg & (! (distleq(relDist(50), blackBorder)))), relDist(3))
+let nevSegSmooth = smoothen(maxvol(preSeg & (! (distleq(relDist(50), blackBorder)))), relDist(10))
+
+// Take intersection of small and larger noise removal for accurate nevus borders
+let nevSeg1 = maxvol(nevSeg & nevSegSmooth & !patch)
+
+//-----  First attempt of nevus segmentation ----
+
+let nevSegV0 = nevSeg1
+
+
+//--------------OUTPUT-----------------
+
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/ISIC_0000034_nevSegV0.png" nevSegV0
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/ISIC_0000034_patch.png" patch
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/ISIC_0000034_patchSample.png" patchSample
+ 
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/bgSimScore.nii.gz" bgSimScore
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/bgSim.nii.gz" bgSim
+
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/bgSample.nii.gz" bgSample
+
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/blackBorder.nii.gz" blackBorder 
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/almostBlack.nii.gz" almostBlack
+
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/nevSegV0.nii.gz" nevSegV0 
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/preSeg.nii.gz" preSeg 
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/nevSeg1.nii.gz" nevSeg1
+
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/patch.nii.gz" patch
+
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/nevusImgIntens.nii.gz" nevusImgIntens
+save "output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000034/groundIntens.nii.gz" groundIntens
+
+// Print some interesting Dice-Soerensen scores
+print "DICE V0" diceM(nevSegV0)
+
+// Print true detection rate, false positive rate and error rate
+print "SE Sensitivity V0" sensitivity(nevSegV0,manualSeg)
+print "SP Specificity V0" specificity(nevSegV0,manualSeg)
+print "AC Accuracy V0" accuracy(nevSegV0,manualSeg)
+print "FPR V0" flsPositiveRate(nevSegV0,manualSeg)
+print "ER V0" errRate(nevSegV0,manualSeg)
+
+// Print Jaccard coefficent
+print "Jaccard V0" jaccard(nevSegV0,manualSeg)
+
+// Print compactness score between [0,1]
+print "Compact PPM V0" ppM(nevSegV0)
+
+
+
+
+
+
+ 
+

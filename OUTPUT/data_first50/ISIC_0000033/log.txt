@@ -1,0 +1,38 @@
+FASE2021_NevSegV0_specification/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public.imgql started at Tue 13 Oct 2020 12:48:25 PM UTC on ISIC_0000033
+[        16ms] [info] VoxLogicA 0.5.99.1-experimental
+[        46ms] [info] ITK Version: 4.13
+[        46ms] [info] SimpleITK Version: 1.2
+[        76ms] [warn] You are using a PRERELEASE version of VoxLogicA. The most recent stable release is 0.5.99.
+[       303ms] [info] Parsing input...
+[       337ms] [info] Preparing computation...
+[       344ms] [info] Importing file "/home/broccia/VoxLogicA/stdlib.imgql"
+[       352ms] [info] Loading file /home/broccia/testNevi/FASE2021_DATASETS/data_first50/ISIC_0000033/ISIC_0000033_seg_RGB.png
+[       432ms] [info] Loading file /home/broccia/testNevi/FASE2021_DATASETS/data_first50/ISIC_0000033/ISIC_0000033.png
+[       773ms] [info] Starting computation...
+[       774ms] [info] Running 294 tasks
+[       895ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/groundIntens.nii.gz
+[       895ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/nevusImgIntens.nii.gz
+[       934ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/almostBlack.nii.gz
+[      1064ms] [warn] saving boolean image to ISIC_0000033_patchSample.png; value 'true' is set to 255, not 1
+[      1065ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/ISIC_0000033_patchSample.png
+[      1089ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/blackBorder.nii.gz
+[      1276ms] [warn] saving boolean image to ISIC_0000033_patch.png; value 'true' is set to 255, not 1
+[      1278ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/ISIC_0000033_patch.png
+[      1280ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/bgSample.nii.gz
+[      1298ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/patch.nii.gz
+[      1610ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/bgSimScore.nii.gz
+[      1620ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/bgSim.nii.gz
+[      1671ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/preSeg.nii.gz
+[      1764ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/nevSegV0.nii.gz
+[      1764ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/nevSeg1.nii.gz
+[      1775ms] [warn] saving boolean image to ISIC_0000033_nevSegV0.png; value 'true' is set to 255, not 1
+[      1780ms] [info] Saving file /home/broccia/testNevi/output/nevusSegm_v8d_2020_10_08_16h52_nevSegV0_CLEAN_public/FASE2021_DATASETS/data_first50/ISIC_0000033/ISIC_0000033_nevSegV0.png
+[      1784ms] [user] DICE V0=0.04291713455
+[      1784ms] [user] Jaccard V0=0.0219291351
+[      1789ms] [user] FPR V0=0.0
+[      1789ms] [user] SP Specificity V0=1.0
+[      1790ms] [user] ER V0=0.4397061041
+[      1790ms] [user] SE Sensitivity V0=0.0219291351
+[      1790ms] [user] AC Accuracy V0=0.5602938959
+[      1901ms] [user] Compact PPM V0=0.3902590412
+[      1901ms] [info] ... done.

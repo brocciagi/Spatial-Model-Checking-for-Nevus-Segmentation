@@ -4,6 +4,7 @@ Application of spatial and spatio-temporal model checking techniques to the cont
 Directory DATASETS contains two datasets used to perform the analysis:
   - data_first10 contains the first 10 images of the ISIC Gallery (https://www.isic-archive.com/#!/topWithHeader/onlyHeaderTop/gallery).
   - data_first50 contains the first 50 images of the ISIC Gallery (https://www.isic-archive.com/#!/topWithHeader/onlyHeaderTop/gallery).
+
 All the data in the datasets within directory DATASETS are among those licensed for free public download and use, under the CC-0 license (https://creativecommons.org/publicdomain/zero/1.0/).
 
 Directory SPECIFICATION contains the specification used to perform the analysis. The model checker used to perform the analysis is VoxLogicA, a tool for analysing images using ImgQL specifications available at https://github.com/vincenzoml/VoxLogicA.

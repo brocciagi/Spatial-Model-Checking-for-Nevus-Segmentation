@@ -38,7 +38,7 @@
 // 4) All sample images seem to deal only with fair skin colour. The current specification 
 //    is not suitable for different colour skin due to lack of training images for that type.
 //
-// Analyse with VoxLogicA_0.5.99.1-experimental_osx-x64 of 2020/02/19
+// Analyse with VoxLogicA_0.6.0
 //
 // using script: ./run_analysis.sh data nevusSegm.imgql
 //

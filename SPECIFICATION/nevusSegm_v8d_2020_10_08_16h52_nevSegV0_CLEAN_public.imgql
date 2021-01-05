@@ -242,7 +242,9 @@ print "Jaccard V0" jaccard(nevSegV0,manualSeg)
 // Print compactness score between [0,1]
 print "Compact PPM V0" ppM(nevSegV0)
 
-
+//Print the volume of the nevus part which touch the borders/is at a distance less than 5 px
+print "Border Volume" volume(touchBorder)
+print "BlackBorder Volume" volume(touchBlackBorder)
 
 
 

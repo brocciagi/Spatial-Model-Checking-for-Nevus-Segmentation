@@ -2,20 +2,23 @@ SOFTWARE, TEST DATA AND SPECIFICATION FOR THE PAPER: "Feasibility of
 Spatial Model Checking for Nevus Segmentation"
 ====================================================================
 
-This archive contains a snapshot part of the following repository: 
+This directory is part of the following repository: 
 
 https://github.com/brocciagi/Spatial-Model-Checking-for-Nevus-Segmentation
 
-specifically, the directory
+Directory URL:
 
 https://github.com/brocciagi/Spatial-Model-Checking-for-Nevus-Segmentation/tree/main/Feasibility_of_Spatial_Model_Checking_for_Nevus_Segmentation
     
+The directory contains the specification, the dataset and the results of
+the analysis described in the paper
 
-The archive contains the specification, the dataset and the results of
-the analysis described in the paper "Feasibility of Spatial Model
-Checking for Nevus Segmentation". Additionally, version 0.6.0 of
-VoxLogicA for linux, osx and windows is included (see
-https://github.com/vincenzoml/VoxLogicA).
+G. Belmonte, G. Broccia, V. Ciancia, D. Latella, M. Massink
+Feasibility of Spatial Model Checking for Nevus Segmentation
+
+
+Additionally, version 0.6.0 of VoxLogicA for linux, osx and windows is
+included (see https://github.com/vincenzoml/VoxLogicA).
 
 Directory DATASETS contains the datasets used to perform the analysis:
 
